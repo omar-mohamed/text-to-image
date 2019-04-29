@@ -19,7 +19,7 @@ def main():
 		captions = f.read().split('\n')
 
 	captions = [cap for cap in captions if len(cap) > 0]
-	print captions
+	print(captions)
 	model = skipthoughts.load_model()
 	caption_vectors = skipthoughts.encode(model, captions)
 
