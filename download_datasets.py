@@ -4,6 +4,7 @@ import os
 import sys
 import errno
 import tarfile
+import zipfile
 
 if sys.version_info >= (3,):
     from urllib.request import urlretrieve
@@ -97,6 +98,27 @@ def download_dataset(data_name):
             os.path.join(MODEL_DIR, pretrained_model_filename),
             reporthook=dl_progress_hook,
         )
+    elif data_name == 'birds':
+        print('== Birds dataset ==')
+        birds_dir = os.path.join(DATA_DIR, 'birds')
+        birds_jpg_tgz = os.path.join(birds_dir, 'CUB_200_2011.tgz')
+        make_sure_path_exists(birds_dir)
+
+        # the original google drive link at https://drive.google.com/file/d/0B0ywwgffWnLLcms2WWJQRFNSWXM/view
+        # from https://github.com/reedscot/icml2016 is problematic to download automatically, so included
+        # the text_c10 directory from that archive as a bzipped file in the repo
+        captions_zip = os.path.join(DATA_DIR, 'birds.zip')
+        print(('Extracting ' + captions_zip))
+        captions_tar = zipfile.ZipFile(captions_zip)
+        captions_tar.extractall(birds_dir)
+
+        birds_url = 'http://www.vision.caltech.edu/visipedia-data/CUB-200-2011/CUB_200_2011.tgz'
+        print(('Downloading ' + birds_jpg_tgz + ' from ' + birds_url))
+        urlretrieve(birds_url, birds_jpg_tgz,
+                    reporthook=dl_progress_hook)
+        print(('Extracting ' + birds_jpg_tgz))
+        birds_jpg_tar = tarfile.open(birds_jpg_tgz, 'r:gz')
+        birds_jpg_tar.extractall(birds_dir)  # archive contains jpg/ folder
 
     else:
         raise ValueError('Unknown dataset name: ' + data_name)
@@ -105,7 +127,7 @@ def download_dataset(data_name):
 def main():
     create_data_paths()
     # TODO: make configurable via command-line
-    download_dataset('flowers')
+    # download_dataset('flowers')
     download_dataset('skipthoughts')
     download_dataset('nltk_punkt')
     download_dataset('pretrained_model')
