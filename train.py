@@ -57,7 +57,7 @@ def main():
     parser.add_argument('--resume_model', type=str, default=None,
                         help='Pre-Trained Model Path, to resume from')
 
-    parser.add_argument('--data_set', type=str, default="birds",
+    parser.add_argument('--data_set', type=str, default="flowers",
                         help='Dat set: MS-COCO, flowers')
 
     parser.add_argument('--data_set2', type=str, default="birds",
